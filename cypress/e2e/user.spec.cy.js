@@ -1,26 +1,25 @@
 import userData from '../fixtures/user-data.json'
+import LoginPage from '../pages/loginPage'
+import DashboardPage from '../pages/dashboardPage'
+
+const loginPage = new LoginPage()
+const dashboardpage = new DashboardPage
 
 describe('Orange HRM Tests', () => {
 
   //seletores abaixo 
 
   const selectorsList = {
-
-    usernameField: "[name='username']",
-    passowordFild: "[name='password']",
-    loginButton: "[type='submit",
     sectionTitleTopBar: ".oxd-topbar-header-breadcrumb > .oxd-text",
-    dashboardGrid: "orangehrm-dashboard-grid",
-    wrongCredentialAlert: "[role='alert']",
+
     myInfoButton: ':nth-child(6) > .oxd-main-menu-item',
     FirstNameField: '.orangehrm-firstname',
     LastNameField: ':nth-child(3) > :nth-child(2) > .oxd-input',
-    IdFuncionario: ':nth-child(1) > :nth-child(1) > .oxd-input-group > :nth-child(2) > .oxd-input',
-    OutraIdentificação: ':nth-child(3) > :nth-child(1) > :nth-child(2) > .oxd-input-group > :nth-child(2) > .oxd-input',
-    DriveLicenseNumber: ':nth-child(2) > :nth-child(1) > .oxd-input-group > :nth-child(2) > .oxd-input',
     dateField: ':nth-child(2) > .oxd-input-group > :nth-child(2) > .oxd-date-wrapper > .oxd-date-input > .oxd-input',
     dateClouseButton: '.--close',
-    submitButton: '.orangehrm-card-container > .oxd-form > .oxd-form-actions > .oxd-button'
+    submitButton: '.orangehrm-card-container > .oxd-form > .oxd-form-actions > .oxd-button',
+    genericField: ".oxd-input--active",
+    genercicCombobox: '.oxd-select-text--arrow'
   }
 
   // Login com sucesso
@@ -33,12 +32,14 @@ describe('Orange HRM Tests', () => {
 
 
   it.only('User Info Update - success', () => {
+    loginPage.accessLoginPage()
+    loginPage.loginwithUser(userData.userSuccess.username, userData.userSuccess.password)
 
-    cy.visit('/auth/login')
-    cy.get(selectorsList.usernameField).type(userData.userSuccess.username)
-    cy.get(selectorsList.passowordFild).type(userData.userSuccess.password)
-    cy.get(selectorsList.loginButton).click()
-    cy.location('pathname').should('equal', '/web/index.php/dashboard/index')
+    dashboardpage.checkDashboardPage9
+
+
+
+
     cy.get(selectorsList.sectionTitleTopBar)
 
     //Preenchendo Minhas informações
@@ -47,12 +48,24 @@ describe('Orange HRM Tests', () => {
     cy.get(selectorsList.myInfoButton).click()
     cy.get(selectorsList.FirstNameField).clear().type('Thiago')
     cy.get(selectorsList.LastNameField).clear().type('Santos')
-    cy.get(selectorsList.IdFuncionario).clear().type(232)
-    cy.get(selectorsList.OutraIdentificação).clear().type(321)
-    cy.get(selectorsList.DriveLicenseNumber).clear().type(564)
-    cy.get(selectorsList.dateField).clear().type('2025 - 03 - 10')
+    cy.get(selectorsList.genericField).eq(4).clear().type('Employee')
+    cy.get(selectorsList.genericField).eq(5).clear().type('OtherIdTest')
+    cy.get(selectorsList.genericField).eq(6).clear().type('DriveLicensetest')
+    //cy.get(selectorsList.genericField).eq(7).clear().type('2025-03-10')
     cy.get(selectorsList.dateClouseButton).click()
-    cy.get(selectorsList.submitButton).click()
+    cy.get(selectorsList.genericField).eq(7).clear().type('ssnNunmberTest')
+    cy.get(selectorsList.genericField).eq(8).clear().type('sinNumbertest')
+    cy.get(selectorsList.submitButton).click({ force: true })
+
+    // Campo de Nacionalidade e Estado civil
+
+    cy.get(selectorsList.genercicCombobox).eq(0).click()
+    cy.get(':nth-child(4) > span').click()
+    cy.get(selectorsList.genercicCombobox).eq(1).click()
+    cy.get('.oxd-select-dropdown > :nth-child(2)').click()
+
+
+
 
   })
 
